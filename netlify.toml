@@ -1,0 +1,15 @@
+# Netlify config for SHVpro.
+#
+# IMPORTANT: if you already have a netlify.toml in your repo (or publish settings
+# configured directly in the Netlify UI), don't just overwrite it with this file —
+# merge the [functions] and [[redirects]] sections below into your existing one,
+# keeping your existing [build] publish directory setting.
+
+[functions]
+  directory = "netlify/functions"
+
+[[redirects]]
+  from = "/api/jobs"
+  to = "/.netlify/functions/jobs"
+  status = 200
+  force = true
