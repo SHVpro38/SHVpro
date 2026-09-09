@@ -4661,6 +4661,12 @@ function autoComp(n) {
     compText.textContent = comp || 'Fill in details above to auto-generate...';
     compText.className = 'out-text' + (comp ? ' has-content' : ' empty');
   }
+
+  // Auto-generate sales conclusions whenever a comparable updates
+  clearTimeout(autoComp._scTimer);
+  autoComp._scTimer = setTimeout(function() {
+    if (typeof generateSalesConclusions === 'function') generateSalesConclusions();
+  }, 400);
 }
 
 let activeRecognition = null;
@@ -5621,7 +5627,20 @@ function exportToWord(restore) {
 
   // ── Sales Conclusions ─────────────────────────────────────────────
   add(heading('Sales Conclusions'));
-  add(p('Based on the characteristics and comparable sales analysed, we are of the opinion...'));
+  var scOut = document.getElementById('sales-conclusions-out');
+  var scTa  = document.getElementById('salesConclusionsDraft');
+  var scText = '';
+  if (scTa && scTa.style.display !== 'none') {
+    scText = scTa.value.trim();
+  } else if (scOut) {
+    scText = scOut.textContent.trim();
+  }
+  if (!scText || scText.includes('Fill in comparables') || scText.includes('tap Auto-generate')) {
+    scText = 'Based on the characteristics and comparable sales analysed, we are of the opinion...';
+  }
+  scText.split('\n\n').forEach(function(para) {
+    if (para.trim()) add(p(para.trim()));
+  });
 
   // ── Pack & download ───────────────────────────────────────────────
   var doc = new d.Document({ sections: [{ children: children }] });
