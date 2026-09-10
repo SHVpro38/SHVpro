@@ -939,11 +939,11 @@ function checkPin() {
     <div class="form-grid cols3" style="margin-bottom:12px">
       <div class="field">
         <label>Overall condition</label>
-        <select id="condition" onchange="autoCondNote()"><option>Excellent</option><option selected>Good</option><option>Average</option><option>Below Average</option><option>Poor</option></select>
+        <select id="condition" onchange="autoCondNote()"><option>Brand new</option><option>Excellent</option><option selected>Good</option><option>Average</option><option>Below Average</option><option>Poor</option></select>
       </div>
       <div class="field">
         <label>Renovation level</label>
-        <select id="reno" onchange="autoPropDesc()"><option>As-new</option><option>Fully Renovated</option><option>Partially Renovated</option><option>Tidy</option><option selected>Original / Dated</option></select>
+        <select id="reno" onchange="autoPropDesc()"><option>As-new</option><option>Near new</option><option>Fully Renovated</option><option>Partially Renovated</option><option>Tidy</option><option selected>Original / Dated</option></select>
       </div>
     </div>
     <textarea id="condNote" style="display:none">Average for age. There were no items of deferred repair and maintenance noted.</textarea>
@@ -979,29 +979,6 @@ function checkPin() {
     <textarea id="ins-other"></textarea>
   </div>
 
-  <!-- ==================== PHOTOS CARD ==================== -->
-  <div class="card">
-    <div class="card-title">📷 Photos</div>
-    <div class="card-sub">Take all photos while walking through the property. They'll be embedded in the Word report automatically.</div>
-
-    <div id="photo-status-bar" style="
-      background: var(--amber-light);
-      border: 1px solid var(--amber);
-      border-radius: 8px;
-      padding: 10px 14px;
-      margin-bottom: 16px;
-      font-size: 13px;
-      font-weight: 600;
-    ">
-      <span id="photo-status" style="color:var(--amber)">0 / 5 required photos captured</span>
-    </div>
-
-    <div class="photo-section-label">Accommodation</div>
-    <div class="photo-grid" id="pg-accommodation"></div>
-
-    <div class="photo-section-label" style="margin-top:16px">Defects</div>
-    <div class="photo-grid" id="pg-defects"></div>
-  </div>
 
   <div class="card">
     <div class="card-title">3.2 Accommodation</div>
@@ -1380,33 +1357,39 @@ function checkPin() {
     <button class="section-copy-btn" onclick="copyAllConstruction(this)">📋 Copy all construction</button>
 
     <div class="section-title">Foundations</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-foundations">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-foundations">
       <div class="chip" onclick="this.classList.toggle('on')">Concrete slab</div>
       <div class="chip" onclick="this.classList.toggle('on')">Concrete perimeter</div>
       <div class="chip" onclick="this.classList.toggle('on')">Concrete pile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Timber pile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Timber jack stud</div>
       <div class="chip" onclick="this.classList.toggle('on')">Unknown</div>
+      <div class="chip" onclick="toggleCompOther('cs-foundations-other')">Other</div>
     </div>
+    <div id="cs-foundations-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-foundations-other-val" placeholder="Custom foundation..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Floors</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-floors">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-floors">
       <div class="chip" onclick="this.classList.toggle('on')">Concrete</div>
       <div class="chip" onclick="this.classList.toggle('on')">Particleboard (or similar)</div>
       <div class="chip" onclick="this.classList.toggle('on')">Timber</div>
       <div class="chip" onclick="this.classList.toggle('on')">Plywood</div>
+      <div class="chip" onclick="toggleCompOther('cs-floors-other')">Other</div>
     </div>
+    <div id="cs-floors-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-floors-other-val" placeholder="Custom floor..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Frame</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-frame">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-frame">
       <div class="chip" onclick="this.classList.toggle('on')">Timber</div>
       <div class="chip" onclick="this.classList.toggle('on')">Concrete block</div>
       <div class="chip" onclick="this.classList.toggle('on')">Concrete</div>
       <div class="chip" onclick="this.classList.toggle('on')">Unknown</div>
+      <div class="chip" onclick="toggleCompOther('cs-frame-other')">Other</div>
     </div>
+    <div id="cs-frame-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-frame-other-val" placeholder="Custom frame..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Exterior / cladding</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-exterior" onchange="autoPropDesc()">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-exterior" onchange="autoPropDesc()">
       <div class="chip" onclick="this.classList.toggle('on')">Brick</div>
       <div class="chip" onclick="this.classList.toggle('on')">Brick and tile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Bricklite</div>
@@ -1418,29 +1401,35 @@ function checkPin() {
       <div class="chip" onclick="this.classList.toggle('on')">Concrete block</div>
       <div class="chip" onclick="this.classList.toggle('on')">Profile metal</div>
       <div class="chip" onclick="this.classList.toggle('on')">Vertical board and batten</div>
+      <div class="chip" onclick="toggleCompOther('cs-exterior-other')">Other</div>
     </div>
+    <div id="cs-exterior-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-exterior-other-val" placeholder="Custom cladding..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Joinery</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-joinery">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-joinery">
       <div class="chip" onclick="this.classList.toggle('on')">Aluminium</div>
       <div class="chip" onclick="this.classList.toggle('on')">Aluminium double glazed</div>
       <div class="chip" onclick="this.classList.toggle('on')">uPVC</div>
       <div class="chip" onclick="this.classList.toggle('on')">uPVC double glazed</div>
       <div class="chip" onclick="this.classList.toggle('on')">Timber</div>
+      <div class="chip" onclick="toggleCompOther('cs-joinery-other')">Other</div>
     </div>
+    <div id="cs-joinery-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-joinery-other-val" placeholder="Custom joinery..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Roof</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-roof">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-roof">
       <div class="chip" onclick="this.classList.toggle('on')">Concrete tile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Clay tile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Metal tile</div>
       <div class="chip" onclick="this.classList.toggle('on')">Corrugated iron</div>
       <div class="chip" onclick="this.classList.toggle('on')">Profile metal</div>
       <div class="chip" onclick="this.classList.toggle('on')">Asphalt shingle</div>
+      <div class="chip" onclick="toggleCompOther('cs-roof-other')">Other</div>
     </div>
+    <div id="cs-roof-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-roof-other-val" placeholder="Custom roof..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
 
     <div class="section-title">Internal linings</div>
-    <div class="chip-group" style="margin-bottom:14px" id="cs-linings">
+    <div class="chip-group" style="margin-bottom:6px" id="cs-linings">
       <div class="chip" onclick="this.classList.toggle('on')">Plasterboard walls and ceilings</div>
       <div class="chip" onclick="this.classList.toggle('on')">Carpet flooring</div>
       <div class="chip" onclick="this.classList.toggle('on')">Vinyl flooring</div>
@@ -1452,7 +1441,9 @@ function checkPin() {
       <div class="chip" onclick="this.classList.toggle('on')">Pendant lighting</div>
       <div class="chip" onclick="this.classList.toggle('on')">Exposed timber beams</div>
       <div class="chip" onclick="this.classList.toggle('on')">Raked ceilings</div>
+      <div class="chip" onclick="toggleCompOther('cs-linings-other')">Other</div>
     </div>
+    <div id="cs-linings-other" style="display:none;margin-bottom:14px"><input type="text" id="cs-linings-other-val" placeholder="Custom lining..." style="width:100%;padding:6px 10px;border:1.5px solid var(--border);border-radius:8px;font-size:13px;" oninput="autoPropDesc()"></div>
   </div>
 
     <div class="btn-row" style="margin-top:16px">
@@ -1746,6 +1737,7 @@ function setCondition(el, val) {
   document.querySelectorAll('.single-cond').forEach(c => c.classList.remove('on'));
   el.classList.add('on');
   const notes = {
+    'Brand new': 'The property presents in brand new condition throughout with no items of deferred repair and maintenance noted.',
     'Excellent': 'The property presents in excellent condition throughout with no items of deferred repair and maintenance noted.',
     'Good': 'The property presents in good condition consistent with its age. There were no items of deferred repair and maintenance noted.',
     'Average': 'Average for age. There were no items of deferred repair and maintenance noted.',
@@ -2239,7 +2231,11 @@ function calcFloorTotal() {
 
 // ==================== CONSTRUCTION HELPERS ====================
 function getChecked(groupId) {
-  return Array.from(document.querySelectorAll('#' + groupId + ' .chip.on')).map(c => c.textContent).join(', ');
+  const chips = Array.from(document.querySelectorAll('#' + groupId + ' .chip.on')).map(c => c.textContent).filter(t => t !== 'Other');
+  const otherId = groupId + '-other-val';
+  const otherEl = document.getElementById(otherId);
+  if (otherEl && otherEl.value.trim()) chips.push(otherEl.value.trim());
+  return chips.join(', ');
 }
 
 // ==================== COLLECT DATA ====================
@@ -2258,8 +2254,8 @@ function collectData() {
         baths: (document.getElementById('comp-bath-' + i) || {}).value || '',
         garage: (document.getElementById('comp-gar-' + i) || {}).value || '',
         condition: (compData[i] || {}).cond || 'Good',
-        description: document.getElementById('comp-desc-text-' + i)?.textContent?.replace('Fill in details above to auto-generate...','') || '',
-        comparability: document.getElementById('comp-comp-text-' + i)?.textContent?.replace('Fill in details above to auto-generate...','') || '',
+        description: (document.getElementById('comp-desc-text-' + i)?.innerText || '').replace('Fill in details above to auto-generate...','').trim(),
+        comparability: (document.getElementById('comp-comp-text-' + i)?.innerText || '').replace('Fill in details above to auto-generate...','').trim(),
         notes: (document.getElementById('comp-notes-' + i) || {}).value || '',
       });
     }
@@ -2757,8 +2753,11 @@ function exportJSON() {
   });
   // Construction chips
   function getChips(id) {
-    return Array.from(document.querySelectorAll('#' + id + ' .chip.on'))
-      .map(c => c.textContent.trim()).join(', ');
+    const chips = Array.from(document.querySelectorAll('#' + id + ' .chip.on'))
+      .map(c => c.textContent.trim()).filter(t => t !== 'Other');
+    const otherEl = document.getElementById(id + '-other-val');
+    if (otherEl && otherEl.value.trim()) chips.push(otherEl.value.trim());
+    return chips.join(', ');
   }
   const payload = {
     propertyDescription: document.getElementById('features')?.value || '',
@@ -3812,7 +3811,12 @@ function autoPropDesc() {
     else compStr = compParts.slice(0,-1).join(', ') + ', and ' + compParts[compParts.length-1];
   }
 
-  let s2 = `The improvements are situated on ${titlePhrase} title, comprising ${compStr}.`;
+  // Position — only mention if rear site
+  const positionRaw = (document.getElementById('positionAccess')?.value || '').trim();
+  const isRear = positionRaw.toLowerCase().startsWith('rear');
+  const positionWord = isRear ? 'rear ' : '';
+
+  let s2 = `The improvements are situated on a ${positionWord}${titleType || 'Fee Simple'} title, comprising ${compStr}.`;
 
   // --- Sentence 3: Location ---
   let s3 = '';
@@ -3837,6 +3841,7 @@ function autoPropDesc() {
 function autoCondNote() {
   const val = document.getElementById('condition').value;
   const notes = {
+    'Brand new': 'The property presents in brand new condition throughout with no items of deferred repair and maintenance noted.',
     'Excellent': 'The property presents in excellent condition throughout with no items of deferred repair and maintenance noted.',
     'Good': 'The property presents in good condition consistent with its age. There were no items of deferred repair and maintenance noted.',
     'Average': 'Average for age. There were no items of deferred repair and maintenance noted.',
@@ -4116,6 +4121,21 @@ function toggleCompCarType(n) {
 }
 
 function setCompCount(n, btn) {
+  // Save all typed input values before rebuilding
+  for (let i = 1; i <= 10; i++) {
+    if (!compData[i]) continue;
+    const fields = ['addr','price','date','land','bldg','bed','bath','gar','notes'];
+    const ids    = ['comp-addr-','comp-price-','comp-date-','comp-land-','comp-bldg-','comp-bed-','comp-bath-','comp-gar-','comp-notes-'];
+    fields.forEach((f, idx) => {
+      const el = document.getElementById(ids[idx] + i);
+      if (el) compData[i]['_' + f] = el.value;
+    });
+    const descEl = document.getElementById('comp-desc-text-' + i);
+    const compEl = document.getElementById('comp-comp-text-' + i);
+    if (descEl && !descEl.textContent.includes('Fill in')) compData[i]._descOut = descEl.textContent;
+    if (compEl && !compEl.textContent.includes('Fill in')) compData[i]._compOut = compEl.textContent;
+  }
+
   document.querySelectorAll('#comp-count-chips .chip').forEach(c => c.classList.remove('on'));
   btn.classList.add('on');
   const container = document.getElementById('comps-container');
@@ -4124,6 +4144,24 @@ function setCompCount(n, btn) {
     if (!compData[i]) compData[i] = { cond: 'Good', cladChips: {}, roofChips: {} };
     container.innerHTML += buildCompCardHTML(i, n);
   }
+
+  // Restore after DOM has fully rendered
+  setTimeout(function() {
+    for (let i = 1; i <= n; i++) {
+      if (!compData[i]) continue;
+      const d = compData[i];
+      const fields = ['addr','price','date','land','bldg','bed','bath','gar','notes'];
+      const ids    = ['comp-addr-','comp-price-','comp-date-','comp-land-','comp-bldg-','comp-bed-','comp-bath-','comp-gar-','comp-notes-'];
+      fields.forEach((f, idx) => {
+        const el = document.getElementById(ids[idx] + i);
+        if (el && d['_' + f] !== undefined && d['_' + f] !== '') el.value = d['_' + f];
+      });
+      const descEl = document.getElementById('comp-desc-text-' + i);
+      const compEl = document.getElementById('comp-comp-text-' + i);
+      if (descEl && d._descOut) { descEl.textContent = d._descOut; descEl.classList.add('has-content'); descEl.classList.remove('empty'); }
+      if (compEl && d._compOut) { compEl.textContent = d._compOut; compEl.classList.add('has-content'); compEl.classList.remove('empty'); }
+    }
+  }, 50);
 }
 
 function buildCompCardHTML(n, total) {
@@ -4140,12 +4178,6 @@ function buildCompCardHTML(n, total) {
     </div>
 
     <div class="comp-photo-row">
-      <div class="comp-thumb" id="comp-thumb-${n}" onclick="triggerPhoto(${n})">
-        <div class="comp-thumb-icon">📷</div>
-        <div class="comp-thumb-label">Add photo</div>
-        <input type="file" id="comp-file-${n}" accept="image/*" style="display:none" onchange="loadPhoto(${n},this)">
-        <img id="comp-img-${n}" style="display:none" alt="">
-      </div>
       <div class="comp-stats" id="comp-stats-${n}">
         <div class="comp-stat">
           <div class="comp-stat-label">Sale date</div>
@@ -4236,6 +4268,7 @@ function buildCompCardHTML(n, total) {
 
       <div class="comp-section-label">Condition / renovation</div>
       <div class="chip-group" style="margin-bottom:10px">
+        <div class="chip" data-cn="${n}" data-cg="reno" data-val="near new" data-single="1" onclick="compCladChip(this)">Near new</div>
         <div class="chip" data-cn="${n}" data-cg="reno" data-val="modernised" data-single="1" onclick="compCladChip(this)">Modernised</div>
         <div class="chip" data-cn="${n}" data-cg="reno" data-val="recently modernised" data-single="1" onclick="compCladChip(this)">Recently modernised</div>
         <div class="chip" data-cn="${n}" data-cg="reno" data-val="modern" data-single="1" onclick="compCladChip(this)">Modern</div>
@@ -4245,8 +4278,8 @@ function buildCompCardHTML(n, total) {
         <div class="chip" data-cn="${n}" data-cg="reno" data-val="refurbished" data-single="1" onclick="compCladChip(this)">Refurbished</div>
       </div>
 
-      <div class="comp-section-label">Cladding / Roof <span style="font-size:10px;color:var(--ink3);font-weight:400;cursor:pointer" onclick="toggleCompClad(${n})">(tap to expand)</span></div>
-      <div id="comp-clad-section-${n}" style="display:none;margin-bottom:8px">
+      <div class="comp-section-label" style="text-decoration:none">Exterior Cladding</div>
+      <div id="comp-clad-section-${n}" style="margin-bottom:8px">
         <div style="font-size:10px;font-weight:600;text-transform:uppercase;color:var(--ink3);margin-bottom:4px">Cladding</div>
         <div class="chip-group" style="margin-bottom:6px">
           ${[['Brick','Brick'],['Brick and tile','Brick and tile'],['Bricklite','Bricklite'],['Fibre cement weatherboard','Fibre cement WB'],['Fibre cement panels','Fibre cement panels'],['Timber weatherboard','Timber'],['Monolithic plaster','Monolithic'],['Stucco plaster','Stucco'],['Profile metal','Profile metal'],['Concrete block','Concrete block']].map(v => `<div class="chip" data-cn="${n}" data-cg="clad" data-val="${v[0]}" onclick="compCladChip(this)">${v[1]}</div>`).join('')}
@@ -4258,9 +4291,10 @@ function buildCompCardHTML(n, total) {
       </div>
 
       <div class="comp-section-label">External features</div>
-      <div class="chip-group" style="margin-bottom:10px">
-        ${['a rear deck','an attached deck','a covered deck','an open deck','a carport','an attached carport','a basement garage','an internal access garage','a single garage','a double garage','a standalone garage','a sleepout','a standalone studio','a workshop','a conservatory','elevated urban views','sea views','rural views','district views'].map(v => `<div class="chip" data-cn="${n}" data-cg="ext" data-val="${v}" onclick="compCladChip(this)">${v.replace(/^a |^an /,'').replace(/^A /,'')}</div>`).join('')}
+      <div class="chip-group" style="margin-bottom:6px">
+        ${['a rear deck','an attached deck','a covered deck','an open deck','a carport','an attached carport','a basement garage','an internal access garage','a single garage','a double garage','a standalone garage','a sleepout','a standalone studio','a workshop','a conservatory','elevated urban views','sea views','rural views','urban views'].map(v => `<div class="chip" data-cn="${n}" data-cg="ext" data-val="${v}" onclick="compCladChip(this)">${v.replace(/^a |^an /,'').replace(/^A /,'')}</div>`).join('')}
       </div>
+      
 
       <div class="comp-section-label">Interior / accommodation</div>
       <div class="chip-group" style="margin-bottom:10px">
@@ -4280,12 +4314,12 @@ function buildCompCardHTML(n, total) {
 
       <div class="comp-out-box copyable" id="comp-desc-out-${n}" ondblclick="copyCompOut('comp-desc-out-${n}')">
         <div class="out-label">Property description</div>
-        <div class="out-text empty" id="comp-desc-text-${n}">Fill in details above to auto-generate...</div>
+        <div class="out-text empty" id="comp-desc-text-${n}" contenteditable="true" spellcheck="true" style="outline:none;cursor:text;" title="Tap to edit">Fill in details above to auto-generate...</div>
       </div>
 
       <div class="comp-out-box copyable" id="comp-comp-out-${n}" ondblclick="copyCompOut('comp-comp-out-${n}')">
         <div class="out-label">Comparability</div>
-        <div class="out-text empty" id="comp-comp-text-${n}">Fill in details above to auto-generate...</div>
+        <div class="out-text empty" id="comp-comp-text-${n}" contenteditable="true" spellcheck="true" style="outline:none;cursor:text;" title="Tap to edit">Fill in details above to auto-generate...</div>
       </div>
 
       <div class="comp-section-label">Additional notes</div>
@@ -4355,6 +4389,11 @@ function setCompCond(n, val, btn) {
   btn.classList.add('active');
   compData[n].cond = val;
   autoComp(n);
+}
+
+function toggleCompOther(id) {
+  const el = document.getElementById(id);
+  if (el) el.style.display = el.style.display === 'none' ? 'block' : 'none';
 }
 
 function toggleCompClad(n) {
@@ -4556,95 +4595,170 @@ function autoComp(n) {
   }
 
   // ── Build comparability ──
-  // Get subject property values
-  const subLand = parseFloat(document.getElementById('landArea')?.value) || 0;
+  const subLand  = parseFloat(document.getElementById('landArea')?.value) || 0;
   const subFloor = parseFloat(document.getElementById('fa-total')?.value || document.getElementById('floorArea')?.value) || 0;
-  const subBed = parseInt(document.getElementById('beds')?.value) || 0;
-  const subGar = parseInt(document.getElementById('cars')?.value) || 0;
-  const subCond = document.getElementById('condition')?.value || 'Good';
+  const subBed   = parseInt(document.getElementById('beds')?.value) || 0;
+  const subGar   = parseInt(document.getElementById('cars')?.value) || 0;
+  const subCond  = document.getElementById('condition')?.value || 'Good';
+  const subEMV   = parseFloat((document.getElementById('emv')?.value || '0').replace(/[^0-9.]/g,'')) || 0;
   const subPositionRaw = document.getElementById('positionAccess')?.value || '';
-  const subIsFront = subPositionRaw.startsWith('Front');
-  const subIsRear = subPositionRaw.startsWith('Rear');
+  const subIsFront = subPositionRaw.toLowerCase().startsWith('front');
+  const subIsRear  = subPositionRaw.toLowerCase().startsWith('rear');
 
   let comp = '';
   if (land || bldg || bed) {
-    const condRank = { 'Excellent': 4, 'Good': 3, 'Average': 2, 'Poor': 1 };
-    const subRank = condRank[subCond] || 3;
-    const compRank = condRank[cond] || 3;
-    const compGar = parseInt(gar) || 0;
+    const condRank = { 'Brand new': 5, 'Excellent': 4, 'Good': 3, 'Average': 2, 'Below Average': 1, 'Poor': 0 };
+    const subRank  = condRank[subCond] !== undefined ? condRank[subCond] : 3;
+    const compRank = condRank[cond]    !== undefined ? condRank[cond]    : 3;
+    const compGar  = parseInt(gar) || 0;
+    const compPrice = parseFloat(document.getElementById('comp-price-' + n)?.value) || 0;
 
-    // Score for conclusion
-    let superior = 0; let inferior = 0;
+    // ── Score attributes ──
+    let supAttribs = []; // things where comp > subject
+    let infAttribs = []; // things where comp < subject
+    let neutAttribs = []; // things that are similar
 
-    // ── Land ──
-    let landPhrase = '';
+    // Land
+    let landPhrase = 'A comparable sized site';
     if (land && subLand) {
-      const diff = land - subLand;
-      const pct = Math.abs(diff / subLand * 100);
-      if (pct > 15) { landPhrase = diff > 0 ? 'A significantly larger site' : 'A significantly smaller site'; diff > 0 ? superior++ : inferior++; }
-      else if (pct > 8) { landPhrase = diff > 0 ? 'A larger site' : 'A smaller site'; diff > 0 ? superior++ : inferior++; }
-      else landPhrase = 'A comparable sized site';
-    } else {
-      landPhrase = 'A comparable sized site';
+      const pct = (land - subLand) / subLand * 100;
+      if (pct > 15)      { landPhrase = 'A significantly larger site'; supAttribs.push('land'); }
+      else if (pct > 8)  { landPhrase = 'A larger site';               supAttribs.push('land'); }
+      else if (pct < -15){ landPhrase = 'A significantly smaller site'; infAttribs.push('land'); }
+      else if (pct < -8) { landPhrase = 'A smaller site';               infAttribs.push('land'); }
     }
 
-    // ── Position (Front/Rear) — only mentioned when it differs from the subject ──
+    // Position — only mention when differs from subject
     const compPosition = (compData[n] && compData[n].position) || document.getElementById('comp-position-' + n)?.value || '';
-    let positionWord = '';
-    if (compPosition === 'front' && subIsRear) { positionWord = 'front'; superior++; }
-    else if (compPosition === 'rear' && subIsFront) { positionWord = 'rear'; inferior++; }
-    if (positionWord) {
-      landPhrase = landPhrase.replace(/\bsite\b/, positionWord + ' site');
-    }
+    if (compPosition === 'front' && subIsRear)       { landPhrase = landPhrase.replace(/\bsite\b/, 'front site'); supAttribs.push('position'); }
+    else if (compPosition === 'rear' && subIsFront)  { landPhrase = landPhrase.replace(/\bsite\b/, 'rear site');  infAttribs.push('position'); }
+    else if (compPosition === 'front' && subIsFront) { landPhrase = landPhrase.replace(/\bsite\b/, 'front site'); }
+    else if (compPosition === 'rear'  && subIsRear)  { landPhrase = landPhrase.replace(/\bsite\b/, 'rear site');  }
 
-    // ── Floor area ──
+    // Floor area
     let floorPhrase = '';
     if (bldg && subFloor) {
-      const diff = bldg - subFloor;
-      const pct = Math.abs(diff / subFloor * 100);
-      if (pct > 15) { floorPhrase = diff > 0 ? 'a significantly larger floor area' : 'a significantly smaller floor area'; diff > 0 ? superior++ : inferior++; }
-      else if (pct > 8) { floorPhrase = diff > 0 ? 'a larger floor area' : 'a smaller floor area'; diff > 0 ? superior++ : inferior++; }
-      else floorPhrase = 'a comparable floor area';
+      const pct = (bldg - subFloor) / subFloor * 100;
+      if (pct > 15)      { floorPhrase = 'a significantly larger floor area'; supAttribs.push('floor'); }
+      else if (pct > 8)  { floorPhrase = 'a larger floor area';               supAttribs.push('floor'); }
+      else if (pct < -15){ floorPhrase = 'a significantly smaller floor area'; infAttribs.push('floor'); }
+      else if (pct < -8) { floorPhrase = 'a smaller floor area';               infAttribs.push('floor'); }
+      else               { floorPhrase = 'a similar floor area';               neutAttribs.push('floor'); }
     }
 
-    // ── Finish / condition ──
-    let finishPhrase = '';
-    if (compRank > subRank) { finishPhrase = 'superior internal finishes'; superior++; }
-    else if (compRank < subRank) { finishPhrase = 'inferior internal quality finishes'; inferior++; }
-    else finishPhrase = 'similar modernised internal finishes';
+    // Bedrooms
+    if (bed && subBed) {
+      const diff = parseInt(bed) - subBed;
+      if (diff > 0) supAttribs.push('bed');
+      else if (diff < 0) infAttribs.push('bed');
+    }
 
-    // ── Garage / Carport ──
-    const compCarWord = (compData[n] && compData[n].carType === 'carport') ? 'a carport' : 'garaging';
-    const noCompCarWord = (compData[n] && compData[n].carType === 'carport') ? 'no carport' : 'no garaging';
+    // Condition / finish
+    let finishPhrase = '';
+    if (compRank > subRank)      { finishPhrase = 'superior internal finishes';        supAttribs.push('finish'); }
+    else if (compRank < subRank) { finishPhrase = 'inferior internal quality finishes'; infAttribs.push('finish'); }
+    else                         { finishPhrase = 'similar internal finishes';          neutAttribs.push('finish'); }
+
+    // Garage
+    const compCarWord   = (compData[n]?.carType === 'carport') ? 'carport' : 'garaging';
+    const noCompCarWord = (compData[n]?.carType === 'carport') ? 'no carport' : 'no garaging';
     let garagePhrase = '';
-    if (compGar > 0 && subGar === 0) { garagePhrase = compCarWord; superior++; }
-    else if (compGar === 0 && subGar > 0) { garagePhrase = noCompCarWord; inferior++; }
+    if (compGar > 0 && subGar === 0)  { garagePhrase = compCarWord;   supAttribs.push('garage'); }
+    else if (compGar === 0 && subGar > 0) { garagePhrase = noCompCarWord; infAttribs.push('garage'); }
+
+    // Tenure
+    const subTitleType  = (document.getElementById('titleType')?.value || '').trim();
+    const compTitleType = (document.getElementById('comp-title-' + n)?.value || '').trim();
+    let tenurePhrase = '';
+    if (subTitleType !== compTitleType && compTitleType) {
+      if (compTitleType === 'Cross Lease') {
+        tenurePhrase = 'cross lease tenure'; infAttribs.push('tenure');
+      } else if (compTitleType === 'Unit Title') {
+        tenurePhrase = 'stratum in freehold tenure'; infAttribs.push('tenure');
+      } else if (compTitleType === 'Fee Simple' && (subTitleType === 'Cross Lease' || subTitleType === 'Unit Title')) {
+        tenurePhrase = 'freehold tenure'; supAttribs.push('tenure');
+      }
+    }
+
+    // ── Price sanity check ──
+    // Use sale price vs subject EMV to validate and adjust conclusion score
+    let priceScore = 0;
+    if (compPrice && subEMV) {
+      const pricePct = (compPrice - subEMV) / subEMV * 100;
+      if (pricePct > 8)       priceScore = 2;   // comp significantly more expensive → likely superior
+      else if (pricePct > 3)  priceScore = 1;   // comp slightly more expensive
+      else if (pricePct < -8) priceScore = -2;  // comp significantly cheaper → likely inferior
+      else if (pricePct < -3) priceScore = -1;  // comp slightly cheaper
+    }
+
+    // Raw attribute score
+    let score = supAttribs.length - infAttribs.length;
+
+    // If price contradicts attribute score — pull toward price signal
+    // e.g. attributes say superior (+2) but price says inferior (−2) → conflict, moderate to comparable
+    if (priceScore !== 0) {
+      if (Math.sign(priceScore) !== Math.sign(score) && Math.abs(score) <= 2) {
+        score = Math.round((score + priceScore) / 2);
+      } else if (Math.sign(priceScore) === Math.sign(score)) {
+        // Price confirms attribute direction — reinforce
+        score = score + Math.sign(priceScore);
+      }
+    }
 
     // ── Conclusion ──
     let conclusion = '';
-    if (superior > inferior + 1) conclusion = 'Overall superior.';
-    else if (inferior > superior + 1) conclusion = 'Overall inferior.';
-    else if (superior > inferior) conclusion = 'On balance, slightly superior.';
-    else if (inferior > superior) conclusion = 'On balance, slightly inferior.';
-    else conclusion = 'On balance, comparable.';
+    if      (score >= 3)  conclusion = 'Overall superior.';
+    else if (score === 2) conclusion = 'On balance, superior.';
+    else if (score === 1) conclusion = 'On balance, slightly superior.';
+    else if (score === 0) conclusion = 'On balance, comparable.';
+    else if (score === -1) conclusion = 'On balance, slightly inferior.';
+    else if (score === -2) conclusion = 'On balance, inferior.';
+    else                   conclusion = 'Overall inferior.';
 
-    // ── Assemble naturally ──
-    // Pattern: "[Site]. [Floor area clause][, although/with finish][and garage]. [Conclusion]"
-    // Uses "although" when finish contradicts site/floor, "with" when consistent
+    // ── Sentence assembly — natural, not list-like ──
+    // Separate attributes into positive (sup) and negative (inf) groups
+    // Structure: "[Land/position] with [positive attributes][, although/however with [negative attributes][and tenure]]. [Conclusion]"
 
-    const sentence1Parts = [landPhrase];
-    if (floorPhrase) sentence1Parts.push('with ' + floorPhrase);
+    const posPhrases = [];
+    const negPhrases = [];
 
-    // Decide connector for finish — "although" if contradicts, "with" if consistent
-    let finishConnector = 'with';
-    const s1Superior = (land && subLand && land > subLand * 1.08) || (bldg && subFloor && bldg > subFloor * 1.08);
-    const s1Inferior = (land && subLand && land < subLand * 0.92) || (bldg && subFloor && bldg < subFloor * 0.92);
-    if ((s1Superior && compRank < subRank) || (s1Inferior && compRank > subRank)) finishConnector = 'although';
+    if (floorPhrase) {
+      if (supAttribs.includes('floor'))      posPhrases.push(floorPhrase);
+      else if (infAttribs.includes('floor')) negPhrases.push(floorPhrase);
+      else                                    posPhrases.push(floorPhrase); // similar — goes with positive
+    }
+    if (finishPhrase) {
+      if (supAttribs.includes('finish'))      posPhrases.push(finishPhrase);
+      else if (infAttribs.includes('finish')) negPhrases.push(finishPhrase);
+      else                                     posPhrases.push(finishPhrase);
+    }
+    if (garagePhrase) {
+      if (supAttribs.includes('garage'))      posPhrases.push(garagePhrase);
+      else if (infAttribs.includes('garage')) negPhrases.push(garagePhrase);
+    }
+    if (tenurePhrase) {
+      if (supAttribs.includes('tenure'))      posPhrases.push(tenurePhrase);
+      else if (infAttribs.includes('tenure')) negPhrases.push(tenurePhrase);
+    }
 
-    if (finishPhrase) sentence1Parts.push(finishConnector + ' ' + finishPhrase);
-    if (garagePhrase) sentence1Parts.push('and ' + garagePhrase);
+    // Pick varied connector based on which side dominates
+    const connectors = ['although', 'however', 'despite'];
+    const connector = connectors[n % connectors.length] || 'although';
 
-    comp = sentence1Parts.join(', ') + '. ' + conclusion;
+    // Build sentence
+    let mainClause = landPhrase;
+    if (posPhrases.length > 0) {
+      mainClause += ' with ' + joinPhrases(posPhrases);
+    }
+    if (negPhrases.length > 0) {
+      if (posPhrases.length > 0) {
+        mainClause += ', ' + connector + ' with ' + joinPhrases(negPhrases);
+      } else {
+        mainClause += ', although with ' + joinPhrases(negPhrases);
+      }
+    }
+
+    comp = mainClause + '. ' + conclusion;
     comp = comp.charAt(0).toUpperCase() + comp.slice(1);
   }
 
@@ -4661,14 +4775,14 @@ function autoComp(n) {
     compText.textContent = comp || 'Fill in details above to auto-generate...';
     compText.className = 'out-text' + (comp ? ' has-content' : ' empty');
   }
-
-  // Auto-generate sales conclusions whenever a comparable updates
-  clearTimeout(autoComp._scTimer);
-  autoComp._scTimer = setTimeout(function() {
-    if (typeof generateSalesConclusions === 'function') generateSalesConclusions();
-  }, 400);
 }
 
+function joinPhrases(arr) {
+  if (arr.length === 0) return '';
+  if (arr.length === 1) return arr[0];
+  if (arr.length === 2) return arr[0] + ' and ' + arr[1];
+  return arr.slice(0, -1).join(', ') + ' and ' + arr[arr.length - 1];
+}
 let activeRecognition = null;
 
 function startVoice(targetId, btn) {
@@ -5515,7 +5629,13 @@ function exportToWord(restore) {
   add(blank());
   add(heading('Site Description'));
   addField('Zoning:', zoneInfo ? zoneInfo.zoningLabel : '');
-  addField('Land Area:', (data.landArea || '') + (data.landArea ? ' sqm (more or less.)' : ''));
+  var titleTypeVal = (document.getElementById('titleType')?.value || '').trim();
+  var landAreaVal = data.landArea || '';
+  var landAreaDisplay = '';
+  if (titleTypeVal === 'Cross Lease') landAreaDisplay = 'Cross Lease';
+  else if (titleTypeVal === 'Unit Title') landAreaDisplay = 'Stratum in Freehold';
+  else landAreaDisplay = landAreaVal ? landAreaVal + ' sqm (more or less.)' : '';
+  addField('Land Area:', landAreaDisplay);
   addField('Current Use:', data.propType || 'Single dwelling');
   addField('Shape:', data.shape);
   addField('Contour:', data.topo);
@@ -5627,20 +5747,25 @@ function exportToWord(restore) {
 
   // ── Sales Conclusions ─────────────────────────────────────────────
   add(heading('Sales Conclusions'));
-  var scOut = document.getElementById('sales-conclusions-out');
-  var scTa  = document.getElementById('salesConclusionsDraft');
-  var scText = '';
-  if (scTa && scTa.style.display !== 'none') {
-    scText = scTa.value.trim();
-  } else if (scOut) {
-    scText = scOut.textContent.trim();
+  try {
+    var scOut = document.getElementById('sales-conclusions-out');
+    var scTa  = document.getElementById('salesConclusionsDraft');
+    var scText = '';
+    if (scTa && scTa.style.display !== 'none') {
+      scText = (scTa.value || '').trim();
+    } else if (scOut) {
+      scText = (scOut.textContent || '').trim();
+    }
+    if (!scText || scText.includes('Fill in comparables') || scText.includes('tap Auto-generate')) {
+      scText = 'Based on the characteristics and comparable sales analysed, we are of the opinion...';
+    }
+    var scParas = scText.split('\n\n');
+    for (var pi = 0; pi < scParas.length; pi++) {
+      if (scParas[pi].trim()) add(p(scParas[pi].trim()));
+    }
+  } catch(e) {
+    add(p('Based on the characteristics and comparable sales analysed, we are of the opinion...'));
   }
-  if (!scText || scText.includes('Fill in comparables') || scText.includes('tap Auto-generate')) {
-    scText = 'Based on the characteristics and comparable sales analysed, we are of the opinion...';
-  }
-  scText.split('\n\n').forEach(function(para) {
-    if (para.trim()) add(p(para.trim()));
-  });
 
   // ── Pack & download ───────────────────────────────────────────────
   var doc = new d.Document({ sections: [{ children: children }] });
