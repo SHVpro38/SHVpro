@@ -3915,17 +3915,25 @@ function autoPropDesc() {
 
   let compStr = '';
   if (dlText) {
-    // Strip items not included in high level description
+    // Strip items not included in high level property description
     let cleanDl = dlText
+      .replace(/^entry,?\s*/i, '')           // remove leading "entry"
+      .replace(/,?\s*entry\b/gi, '')          // remove "entry" anywhere
       .replace(/,?\s*dining area/gi, '')
       .replace(/,?\s*laundry/gi, '')
       .replace(/,?\s*hallway/gi, '')
       .replace(/,?\s*separate toilet/gi, '')
       .replace(/,?\s*kitchen/gi, '')
+      .replace(/living\/$/i, 'open plan living') // fix truncated "living/"
+      .replace(/living\/dining/gi, 'open plan living') // normalise
+      .replace(/living\/dining area/gi, 'open plan living')
+      .replace(/open plan living area/gi, 'open plan living')
       .replace(/\s*,\s*,/g, ',')
       .replace(/^,\s*/, '')
       .replace(/,\s*$/, '')
       .trim();
+    // If cleanDl starts with nothing useful, default to open plan living
+    if (!cleanDl || cleanDl === '/') cleanDl = 'open plan living';
     compStr = cleanDl.charAt(0).toLowerCase() + cleanDl.slice(1);
   } else {
     const compParts = ['open plan living'];
