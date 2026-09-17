@@ -2139,7 +2139,7 @@ function exportPhotos() {
   if (photoKeys.length === 0) { alert('No photos taken yet.'); return; }
   const addr = (document.getElementById('address')?.value || 'property').replace(/[^a-zA-Z0-9]/g,'_').substring(0,40);
   const date = document.getElementById('inspectionDate')?.value || new Date().toISOString().split('T')[0];
-  const valuer = document.getElementById('valuerName')?.value || '';
+  const valuer = resolveValuerName(document.getElementById('valuerName')?.value || '');
   const folderName = `Photos_${addr}`;
   // Download each photo as named file
   photoKeys.forEach(id => {
@@ -2206,7 +2206,7 @@ function generateReconciliation() {
   const lowStr = '$' + (emvNum - 10000).toLocaleString('en-NZ');
   const highStr = '$' + (emvNum + 10000).toLocaleString('en-NZ');
   const subAddr = document.getElementById('address')?.value || 'the subject property';
-  const valuer = document.getElementById('valuerName')?.value || '';
+  const valuer = resolveValuerName(document.getElementById('valuerName')?.value || '');
   const suburb = subAddr.split(',')[1]?.trim() || '';
 
   // Analyse comps
@@ -2493,9 +2493,10 @@ function generateSalesConclusions() {
   function classify(text) {
     const t = text.toLowerCase();
     if (!t || t.includes('fill in')) return 'unknown';
-    if (t.includes('overall superior') || t.includes('slightly superior')) return 'superior';
-    if (t.includes('overall inferior') || t.includes('slightly inferior')) return 'inferior';
-    if (t.includes('comparable') || t.includes('on balance')) return 'comparable';
+    if (t.includes('overall superior') || t.includes('on balance, superior') || t.includes('slightly superior')) return 'superior';
+    if (t.includes('overall inferior') || t.includes('on balance, inferior') || t.includes('slightly inferior')) return 'inferior';
+    if (t.includes('on balance, comparable') || t.includes('overall comparable')) return 'comparable';
+    if (t.includes('comparable')) return 'comparable';
     return 'unknown';
   }
 
@@ -2504,20 +2505,17 @@ function generateSalesConclusions() {
     if (!c.compText || c.compText.includes('Fill in')) return null;
     const cls = classify(c.compText);
 
-    // Strip blunt conclusion phrases from the end
+    // Strip conclusion phrases from the end
     let body = c.compText
       .replace(/[,.]?\s*Overall superior\.?$/i, '')
       .replace(/[,.]?\s*Overall inferior\.?$/i, '')
+      .replace(/[,.]?\s*On balance, superior\.?$/i, '')
+      .replace(/[,.]?\s*On balance, inferior\.?$/i, '')
+      .replace(/[,.]?\s*On balance, comparable\.?$/i, '')
       .replace(/[,.]?\s*On balance, slightly superior\.?$/i, '')
       .replace(/[,.]?\s*On balance, slightly inferior\.?$/i, '')
-      .replace(/[,.]?\s*On balance, comparable\.?$/i, '')
       .replace(/\.$/, '')
       .trim();
-
-    // Collapse repeated adjectives: "modernised kitchen and modernised bathroom" → "modernised kitchen and bathroom"
-    body = body.replace(/\b(\w+)\s+(\w+)\s+and\s+\1\s+(\w+)/gi, '$1 $2 and $3');
-    // Collapse repeated phrases like "a newer dwelling .. a newer dwelling" (defensive)
-    body = body.replace(/\b(a \w+ \w+)\b(.+?)\b\1\b/gi, '$1$2');
 
     // Lowercase first char for mid-sentence embedding
     body = body.charAt(0).toLowerCase() + body.slice(1);
@@ -2541,36 +2539,30 @@ function generateSalesConclusions() {
     ? `The most comparable key sales range ${fmtP(minP)} to ${fmtP(maxP)}.`
     : prices.length === 1 ? `The key comparable sale is ${fmtP(prices[0])}.` : '';
 
-  // Group comps by classification for the opening narrative
-  const inferior  = comps.filter(c => classify(c.compText) === 'inferior');
-  const superior  = comps.filter(c => classify(c.compText) === 'superior');
-  const comparable= comps.filter(c => classify(c.compText) === 'comparable');
-
-  // Opening sentence: subject sits above the inferior comps
-  let openingSentence = '';
-  if (inferior.length && superior.length) {
-    const infNames = inferior.map(c => short(c.addr));
-    const supNames = superior.map(c => short(c.addr));
-    const infStr = infNames.length === 1 ? infNames[0] : infNames.slice(0,-1).join(', ') + ' and ' + infNames[infNames.length-1];
-    const supStr = supNames.length === 1 ? supNames[0] : supNames.slice(0,-1).join(', ') + ' and ' + supNames[supNames.length-1];
-    openingSentence = `The subject's value sits above ${infStr} and below ${supStr} when considering the overall attributes of each sale.`;
-  } else if (inferior.length) {
-    const names = inferior.map(c => short(c.addr));
-    const nameStr = names.length === 1 ? names[0] : names.slice(0,-1).join(', ') + ' and ' + names[names.length-1];
-    openingSentence = `The subject's value sits above ${nameStr} when considering the overall attributes of each sale.`;
-  } else if (superior.length) {
-    const names = superior.map(c => short(c.addr));
-    const nameStr = names.length === 1 ? names[0] : names.slice(0,-1).join(', ') + ' and ' + names[names.length-1];
-    openingSentence = `The subject's value sits below ${nameStr} when considering the overall attributes of each sale.`;
-  }
-
-  // Per-comp body sentences
-  const compLines = comps.map(c => compSentence(c)).filter(Boolean);
-
-  // Closing sentence — reads EMV from the shared field
+  // Read subject EMV for price-based comparison
   const emvRaw = document.getElementById('emv-main')?.value?.trim()
     || document.getElementById('finalValue')?.value?.trim() || '';
-  const emvNum = parseFloat(emvRaw.replace(/[$,]/g,''));
+  const emvNum = parseFloat(emvRaw.replace(/[$,]/g,'')) || 0;
+  const priceThreshold = emvNum * 0.02;
+
+  // Group comps by sale price vs EMV — price is primary driver
+  const belowEMV = comps.filter(c => c.price > 0 && emvNum > 0 && (emvNum - c.price) >= priceThreshold);
+  const aboveEMV = comps.filter(c => c.price > 0 && emvNum > 0 && (c.price - emvNum) >= priceThreshold);
+
+  // Opening sentence — collective inferior sentence (price-based)
+  let openingSentence = '';
+  if (belowEMV.length) {
+    const names = belowEMV.map(c => short(c.addr));
+    const nameStr = names.length === 1 ? names[0] : names.slice(0,-1).join(', ') + ' and ' + names[names.length-1];
+    openingSentence = `The subject's value sits above ${nameStr} when considering the overall attributes of each sale.`;
+  }
+
+  // Individual sentences — comparable and superior comps only, not inferior
+  const belowEMVIds = new Set(belowEMV.map(c => c.n));
+  const compLines = comps
+    .filter(c => !belowEMVIds.has(c.n))
+    .map(c => compSentence(c))
+    .filter(Boolean);
   let closingSentence = '';
   if (emvNum > 0) {
     const lo = '$' + (emvNum - 10000).toLocaleString('en-NZ');
@@ -2780,7 +2772,8 @@ At the END output only this JSON (nothing else after it):
 // ==================== FINALISE ====================
 function previewFinal() {
   const data = collectData();
-  const valuerName = document.getElementById('valuerName').value || '[Valuer Name]';
+  const valuerRaw = document.getElementById('valuerName').value || '';
+  const valuerName = resolveValuerName(valuerRaw);
   const licenceNum = document.getElementById('licenceNum').value || '[Licence]';
   const inspDate = document.getElementById('inspectionDate').value || '[Date]';
   const reportDate = document.getElementById('reportDate').value || '[Date]';
@@ -2886,10 +2879,18 @@ function exportJSON() {
   URL.revokeObjectURL(url);
 }
 
+function resolveValuerName(raw) {
+  if (!raw) return '[Valuer Name]';
+  if (raw.includes('+')) return 'Edward Hart, Principal Valuer / Joseph Petty';
+  if (raw === 'J.Petty') return 'Joseph Petty';
+  if (raw === 'E.Hart') return 'Edward Hart';
+  return raw;
+}
+
 function emailTextExport() {
   const data = collectData();
   const addr = data.address || 'Property';
-  const valuer = document.getElementById('valuerName')?.value || '';
+  const valuer = resolveValuerName(document.getElementById('valuerName')?.value || '');
   const inspDate = document.getElementById('inspectionDate')?.value || '';
   const emv = document.getElementById('emv-main')?.value || '—';
   const recon = document.getElementById('reconciliationDraft')?.value || document.getElementById('reconciliation-out')?.textContent || '';
